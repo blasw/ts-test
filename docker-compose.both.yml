@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  ts-test-db:
+    container_name: ts-test-db
+    image: postgres:16.1-alpine3.18
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+    networks:
+      - ts-test
+    ports:
+      - '5432:5432'
+
+  ts-test-server:
+    container_name: ts-test-server
+    image: ts-test-server
+    build: .
+    command: sh -c "npm install && npx prisma migrate dev && npm run start"
+    volumes:
+      - .:/app
+    depends_on:
+      - ts-test-db
+    environment:
+      DATABASE_URL: postgresql://postgres:secret@ts-test-db?sslmode=disable
+    networks:
+      - ts-test
+    ports:
+      - '3000:3000'
+
+networks:
+  ts-test:

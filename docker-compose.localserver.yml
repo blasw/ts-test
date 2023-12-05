@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  ts-test-db:
+    container_name: ts-test-db
+    image: postgres:16.1-alpine3.18
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=secret
+    ports:
+      - 5432:5432
